@@ -251,3 +251,123 @@ module top_module(
     
 endmodule
 ```
+
+
+
+### Always blocks
+
+```verilog
+module top_module(
+    input a, 
+    input b,
+    output wire out_assign,
+    output reg out_alwaysblock
+);
+assign out_assign = a & b ;
+always @(*) out_alwaysblock = a & b ;
+endmodule
+```
+
+
+### Always block clock
+
+```verilog
+// synthesis verilog_input_version verilog_2001
+module top_module(
+    input clk,
+    input a,
+    input b,
+    output wire out_assign,
+    output reg out_always_comb,
+    output reg out_always_ff   );
+	
+    assign out_assign = a & b ;
+	always @(*) out_always_comb = a & b ;
+    always @(posedge clk) 
+        out_always_ff = a & b;    
+endmodule
+```
+
+
+## If statement
+
+```verilog
+module top_module(
+    input a,
+    input b,
+    input sel_b1,
+    input sel_b2,
+    output wire out_assign,
+    output reg out_always   
+); 
+    // Continuous assignment for wire
+    assign out_assign = (sel_b1 & sel_b2) ? b : a;
+    
+    // Always block for reg
+    always @(*) begin
+        if (sel_b1 & sel_b2) begin
+            out_always = b;
+        end
+        else begin
+            out_always = a;
+        end
+    end
+endmodule
+
+```
+
+
+### If statement latches
+
+```verilog
+module top_module (
+    input      cpu_overheated,
+    output reg shut_off_computer,
+    input      arrived,
+    input      gas_tank_empty,
+    output reg keep_driving  
+);
+    always @(*) begin
+        if (cpu_overheated)
+            shut_off_computer = 1;
+        else
+            shut_off_computer = 0;
+    end
+
+    always @(*) begin
+        if (~arrived)
+            keep_driving = ~gas_tank_empty;
+        else
+            keep_driving = 0;
+    end
+endmodule
+```
+
+
+### Case statement
+
+```
+// synthesis verilog_input_version verilog_2001
+module top_module ( 
+    input [2:0] sel, 
+    input [3:0] data0,
+    input [3:0] data1,
+    input [3:0] data2,
+    input [3:0] data3,
+    input [3:0] data4,
+    input [3:0] data5,
+    output reg [3:0] out   
+);
+
+    always@(*) begin 
+        case(sel)
+            3'b000: out = data0;
+            3'b001: out = data1;
+            3'b010: out = data2;
+            3'b011: out = data3;
+            3'b100: out = data4;
+            default: out = data5; 
+        endcase
+    end
+endmodule
+```
