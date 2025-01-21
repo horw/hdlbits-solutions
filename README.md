@@ -371,3 +371,79 @@ module top_module (
     end
 endmodule
 ```
+
+
+### Priority encoder
+
+
+```
+module top_module (
+    input [3:0] in,
+    output reg [1:0] pos  );
+    always @(*) begin
+        if (in[0]) pos = 2'd0;
+        else if (in[1]) pos = 2'd1;
+        else if (in[2]) pos = 2'd2;
+        else if (in[3]) pos = 2'd3;    
+        else pos = 2'd0; 
+    end
+endmodule
+```
+
+
+### Priority encoder with casez
+
+```
+module top_module (
+    input [7:0] in,
+    output reg [2:0] pos );
+    
+        always @(*) begin
+            casez (in[7:0])
+                8'bzzzzzzz1: pos = 0; 
+                8'bzzzzzz1z: pos = 1;
+                8'bzzzzz1zz: pos = 2;
+                8'bzzzz1zzz: pos = 3;
+                8'bzzz1zzzz: pos = 4;
+                8'bzz1zzzzz: pos = 5;
+                8'bz1zzzzzz: pos = 6;
+                8'b1zzzzzzz: pos = 7;
+            default: pos = 0;
+        	endcase
+        end
+endmodule
+```
+
+### Avoiding latches
+
+```
+module top_module (
+    input [15:0] scancode,
+    output reg left,
+    output reg down,
+    output reg right,
+    output reg up  ); 
+    
+    always @(*) begin
+        left = 1'b0;
+        down = 1'b0;
+        right = 1'b0;
+        up = 1'b0;
+        
+        case (scancode)
+            16'he06b: left = 1'b1; 
+            16'he072: down = 1'b1; 
+            16'he074: right = 1'b1; 
+            16'he075: up = 1'b1; 
+            default: begin
+                left = 1'b0;
+                down = 1'b0;
+                right = 1'b0;
+                up = 1'b0;
+            end
+        endcase
+    end
+
+        
+endmodule
+```
